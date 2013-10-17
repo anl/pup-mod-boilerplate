@@ -18,6 +18,11 @@ cat > .gitignore <<EOF
 Gemfile.lock
 EOF
 
+cd .git/hooks
+wget https://raw.github.com/anl/puppet-git-hooks/master/hooks/pre-commit
+chmod 755 pre-commit
+cd ../..
+
 rbenv local $RUBY_VERSION
 cat > Gemfile <<EOF
 source 'https://rubygems.org'
