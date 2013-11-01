@@ -38,6 +38,8 @@ if [ -z "$mod_name" ] ; then
 fi
 
 ruby_vers=${ruby_vers:-$ruby_default_vers}
+eval "$(rbenv init -)"
+rbenv shell $ruby_vers
 
 puppet module generate ${author}-${mod_name}
 mv ${author}-${mod_name} ${mod_name}
