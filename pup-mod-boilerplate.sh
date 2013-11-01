@@ -1,13 +1,47 @@
-#!/bin/bash
+#!/bin/bash -x
 
 set -e
 
+# Default values:
 ruby_default_vers=1.9.3-p448
-RUBY_VERSION=${RUBY_VERSION:-$ruby_default_vers}
 
-puppet module generate ${2}-${1}
-mv ${2}-${1} ${1}
-cd ${1}
+function usage {
+    echo "Usage: $0 [ -r ruby_version ] -n module_name -a module_author"
+    echo
+    echo "  -a  Puppet forge module author name"
+    echo "  -h  Print this usage message"
+    echo "  -n  Puppet module name"
+    echo "  -r  Ruby version (default: ${ruby_default_vers})"
+    exit 1
+}
+
+while getopts "a:hn:r:" flag ; do
+    case $flag in
+	a) author=$OPTARG ;;
+	h) usage ;;
+	n) mod_name=$OPTARG ;;
+	r) ruby_vers=$OPTARG ;;
+	*) usage ;;
+    esac
+done
+
+if [ -z "$author" ] ; then
+    echo "Module author must be set."
+    echo
+    usage
+fi
+
+if [ -z "$mod_name" ] ; then
+    echo "Module name must be set."
+    echo
+    usage
+fi
+
+ruby_vers=${ruby_vers:-$ruby_default_vers}
+
+puppet module generate ${author}-${mod_name}
+mv ${author}-${mod_name} ${mod_name}
+cd ${mod_name}
 
 git init
 cat > .gitignore <<EOF
@@ -23,7 +57,7 @@ wget https://raw.github.com/anl/puppet-git-hooks/master/hooks/pre-commit
 chmod 755 pre-commit
 cd ../..
 
-rbenv local $RUBY_VERSION
+rbenv local $ruby_vers
 cat > Gemfile <<EOF
 source 'https://rubygems.org'
 gem 'puppet-lint'
@@ -46,7 +80,7 @@ EOF
 mkdir vagrant
 cat > vagrant/vagrant.pp <<EOF
 # Include this module
-include $1
+include $mod_name
 EOF
 
 git add .
