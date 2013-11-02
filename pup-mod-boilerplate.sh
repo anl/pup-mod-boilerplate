@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 set -e
 
@@ -6,24 +6,32 @@ set -e
 ruby_default_vers=1.9.3-p448
 
 function usage {
-    echo "Usage: $0 [ -r ruby_version ] -n module_name -a module_author"
+    echo "Usage: $0 -n module_name -a module_author [ -r ruby_version ] [ -v ]"
+    echo "       $0 -h"
     echo
     echo "  -a  Puppet forge module author name"
     echo "  -h  Print this usage message"
     echo "  -n  Puppet module name"
     echo "  -r  Ruby version (default: ${ruby_default_vers})"
+    echo "  -v  Be verbose"
     exit 1
 }
 
-while getopts "a:hn:r:" flag ; do
+while getopts "a:hn:r:v" flag ; do
     case $flag in
 	a) author=$OPTARG ;;
 	h) usage ;;
 	n) mod_name=$OPTARG ;;
 	r) ruby_vers=$OPTARG ;;
+	v) verbose=true ;;
 	*) usage ;;
     esac
 done
+
+verbose_on=${verbose:-false}
+if [[ $verbose_on == 'true' ]] ; then
+    set -x
+fi
 
 if [ -z "$author" ] ; then
     echo "Module author must be set."
