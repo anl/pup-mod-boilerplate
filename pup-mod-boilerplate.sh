@@ -3,7 +3,7 @@
 set -e
 
 # Default values:
-ruby_default_vers=1.9.3-p484
+ruby_default_vers=2.1.2
 
 function usage {
     echo "Usage: $0 -n module_name -a module_author [ -r ruby_version ] [ -v ]"
