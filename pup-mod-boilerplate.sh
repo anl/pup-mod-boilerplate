@@ -82,7 +82,7 @@ Gemfile.lock
 EOF
 
 cd .git/hooks
-wget https://raw.github.com/anl/puppet-git-hooks/master/hooks/pre-commit
+wget https://raw.githubusercontent.com/anl/puppet-git-hooks/master/hooks/pre-commit
 chmod 755 pre-commit
 cd ../..
 
