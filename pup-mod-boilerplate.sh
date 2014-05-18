@@ -45,11 +45,30 @@ if [ -z "$mod_name" ] ; then
     usage
 fi
 
+# Determine which puppet binary to use:
+
+set +e
+bundle exec puppet > /dev/null 2>&1
+bxpuppet_out=$?
+puppet > /dev/null 2>&1
+syspuppet_out=$?
+set -e
+
+if [ $bxpuppet_out -eq 0 ] ; then
+    puppet='bundle exec puppet'
+elif [ $syspuppet_out -eq 0 ] ; then
+    puppet='puppet'
+else
+    echo '"puppet" executable not found.'
+    echo
+    usage
+fi
+
 ruby_vers=${ruby_vers:-$ruby_default_vers}
 eval "$(rbenv init -)"
 rbenv shell $ruby_vers
 
-puppet module generate ${author}-${mod_name}
+$puppet module generate ${author}-${mod_name}
 mv ${author}-${mod_name} ${mod_name}
 cd ${mod_name}
 
